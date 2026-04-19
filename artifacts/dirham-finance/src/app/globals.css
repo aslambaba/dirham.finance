@@ -108,9 +108,9 @@
   --chart-4: 271 81% 56%;
   --chart-5: 0 84% 60%;
 
-  --app-font-sans: 'Plus Jakarta Sans', sans-serif;
+  --app-font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
   --app-font-serif: Georgia, serif;
-  --app-font-mono: 'Inter', monospace;
+  --app-font-mono: var(--font-inter), "Inter", monospace;
   --radius: 0.75rem;
 
   --shadow-2xs: 0px 1px 2px 0px rgba(0,0,0,0.04);
@@ -196,6 +196,10 @@
 }
 
 @layer utilities {
+  .font-inter {
+    font-family: var(--font-inter), "Inter", sans-serif;
+  }
+
   input[type="search"]::-webkit-search-cancel-button {
     @apply hidden;
   }

@@ -19,7 +19,7 @@ run = "pnpm --filter @workspace/dirham-finance run dev"
 
 [services.production]
 build = [ "pnpm", "--filter", "@workspace/dirham-finance", "run", "build" ]
-publicDir = "artifacts/dirham-finance/dist/public"
+publicDir = "artifacts/dirham-finance/out"
 serve = "static"
 
 [[services.production.rewrites]]
@@ -28,4 +28,3 @@ to = "/index.html"
 
 [services.env]
 PORT = "25159"
-BASE_PATH = "/"
