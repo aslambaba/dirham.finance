@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "dirham.finance"
+version = "1.0.0"
+id = "artifacts/dirham-finance"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25159
+
+[services.development]
+run = "pnpm --filter @workspace/dirham-finance run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/dirham-finance", "run", "build" ]
+publicDir = "artifacts/dirham-finance/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25159"
+BASE_PATH = "/"
