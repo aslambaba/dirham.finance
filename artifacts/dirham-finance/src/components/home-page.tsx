@@ -74,7 +74,9 @@ export default function Home() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [amount, setAmount] = useState<string>("1000");
+  const [baseCurrency, setBaseCurrency] = useState<string>("AED");
   const [targetCurrency, setTargetCurrency] = useState<string>("USD");
+  const [dateRange, setDateRange] = useState<number>(30);
 
   const [latest, setLatest] = useState<LatestRatesResponse | null>(null);
   const [yesterday, setYesterday] = useState<Record<string, number> | null>(
@@ -124,7 +126,7 @@ export default function Home() {
     async function loadHist() {
       setHistLoading(true);
       try {
-        const hist = await fetchAedToCurrencyHistory(targetCurrency, 30);
+        const hist = await fetchAedToCurrencyHistory(targetCurrency, dateRange);
         if (!cancelled) setHistoricalData(hist);
       } finally {
         if (!cancelled) setHistLoading(false);
@@ -135,11 +137,25 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, [targetCurrency]);
+  }, [targetCurrency, dateRange]);
 
   const parsedAmount = parseFloat(amount) || 0;
+  const baseMeta = currencyInfo(baseCurrency);
   const targetMeta = currencyInfo(targetCurrency);
-  const targetRate = latest?.rates?.[targetCurrency] ?? null;
+  
+  let targetRate: number | null = null;
+  if (baseCurrency === "AED") {
+    targetRate = latest?.rates?.[targetCurrency] ?? null;
+  } else if (targetCurrency === "AED") {
+    const baseRate = latest?.rates?.[baseCurrency] ?? null;
+    targetRate = baseRate ? 1 / baseRate : null;
+  } else {
+    const baseToAed = latest?.rates?.[baseCurrency] ?? null;
+    const targetToAed = latest?.rates?.[targetCurrency] ?? null;
+    if (baseToAed && targetToAed) {
+      targetRate = targetToAed / baseToAed;
+    }
+  }
 
   const displayRows = useMemo(() => {
     if (!latest?.rates) {
@@ -216,7 +232,7 @@ export default function Home() {
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-xl md:text-3xl font-bold text-muted-foreground">
-                      🇦🇪
+                      {baseMeta.flag}
                     </span>
                     <Input
                       type="number"
@@ -226,14 +242,24 @@ export default function Home() {
                       placeholder="0.00"
                     />
                     <span className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-sm md:text-lg font-bold text-muted-foreground">
-                      AED
+                      {baseCurrency}
                     </span>
                   </div>
                 </div>
                 <div className="flex justify-center md:pt-6">
-                  <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 rotate-90 md:rotate-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setBaseCurrency(targetCurrency);
+                      setTargetCurrency(baseCurrency);
+                      setAmount("1");
+                    }}
+                    className="w-11 h-11 rounded-full bg-primary/10 hover:bg-primary/20 text-primary shrink-0 rotate-90 md:rotate-0 transition-colors active:scale-95"
+                    title="Swap currencies"
+                  >
                     <ArrowRightLeft className="w-5 h-5" />
-                  </div>
+                  </Button>
                 </div>
                 <div className="flex-1 w-full space-y-2 text-left">
                   <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-3">
@@ -399,10 +425,29 @@ export default function Home() {
         </section>
 
         <section className="space-y-4 w-full max-w-6xl mx-auto">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-2">
             <h2 className="text-xl md:text-2xl font-bold">
-              30-Day Trend ({targetCurrency})
+              {dateRange}-Day Trend ({targetCurrency})
             </h2>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: "30D", value: 30 },
+                { label: "90D", value: 90 },
+                { label: "6M", value: 180 },
+                { label: "1Y", value: 365 },
+                { label: "3Y", value: 1095 },
+              ].map(({ label, value }) => (
+                <Button
+                  key={value}
+                  variant={dateRange === value ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setDateRange(value)}
+                  className="h-8 px-3 text-xs font-medium transition-all"
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
           </div>
           <Card className="w-full h-[280px] md:h-[340px] border border-border/50 shadow-md p-4 md:p-6 bg-card/40 backdrop-blur-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />

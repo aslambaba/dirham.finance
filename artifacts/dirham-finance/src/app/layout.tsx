@@ -21,7 +21,12 @@ export const metadata: Metadata = {
   title: "dirham.finance",
   description:
     "Live rates, historical trends, and instant conversions for UAE residents and travelers.",
-  icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
+  icons: [
+    {
+      rel: "icon",
+      url: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🇦🇪</text></svg>",
+    },
+  ],
 };
 
 export default function RootLayout({

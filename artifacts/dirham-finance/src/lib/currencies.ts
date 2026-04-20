@@ -3,6 +3,7 @@
 export type CurrencyInfo = { code: string; name: string; flag: string };
 
 export const CURRENCY_META: Record<string, { name: string; flag: string }> = {
+  AED: { name: "UAE Dirham", flag: "🇦🇪" },
   USD: { name: "US Dollar", flag: "🇺🇸" },
   EUR: { name: "Euro", flag: "🇪🇺" },
   GBP: { name: "British Pound", flag: "🇬🇧" },
