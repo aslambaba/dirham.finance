@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Activity,
+  ExternalLink,
 } from "lucide-react";
 import {
   AreaChart,
@@ -31,6 +32,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   fetchLatestAedRates,
   fetchAedRatesForDay,
@@ -209,6 +216,32 @@ export default function Home() {
           )}
         </div>
       </header>
+
+      <div className="bg-gradient-to-r from-primary/20 to-secondary/20 border-b border-primary/30 py-3">
+        <div className="container mx-auto px-4 flex items-center justify-center gap-4">
+          <span className="text-sm font-semibold text-center">
+            🚀 Premium domain <span className="font-bold text-primary">dirham.finance</span> is available for purchase!
+          </span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="default" size="sm" className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-md">
+                Buy Now <ExternalLink className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => window.open('https://sedo.com/search/?keyword=dirham.finance', '_blank')}>
+                Listed on Sedo.com
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => window.open('https://www.godaddy.com/domainsearch/find?domainToCheck=dirham.finance', '_blank')}>
+                Listed on GoDaddy
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => window.open('mailto:aslamsarfraz@yahoo.com?subject=Interest in purchasing dirham.finance domain', '_blank')}>
+                Contact Owner Directly: aslamsarfraz@yahoo.com
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
 
       <main className="flex-1 container mx-auto px-4 py-6 md:py-10 flex flex-col gap-8 md:gap-12">
         <section className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto text-center space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -597,6 +630,12 @@ export default function Home() {
           </Card>
         </section>
       </main>
+
+      <footer className="border-t border-border/40 bg-muted/20 py-4">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          Crafted with precision by <a href="https://aslamsarfraz.dev" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline">aslamsarfraz.dev</a>
+        </div>
+      </footer>
     </div>
   );
 }
