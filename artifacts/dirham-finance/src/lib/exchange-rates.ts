@@ -48,10 +48,12 @@ export async function fetchAedRatesForDay(
   }
 }
 
-/** Historical 1 AED → USD for chart (jsDelivr daily snapshots). */
-export async function fetchAedToUsdHistory(numDays: number): Promise<
-  { day: number; rate: number; isoDate: string }[]
-> {
+/** Historical 1 AED → `currencyCode` for chart (jsDelivr daily snapshots). */
+export async function fetchAedToCurrencyHistory(
+  currencyCode: string,
+  numDays: number,
+): Promise<{ day: number; rate: number; isoDate: string }[]> {
+  const key = currencyCode.toLowerCase();
   const offsets = Array.from({ length: numDays }, (_, i) => numDays - 1 - i);
   const rows: { rate: number; isoDate: string }[] = [];
 
@@ -63,9 +65,9 @@ export async function fetchAedToUsdHistory(numDays: number): Promise<
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) return;
         const json = (await res.json()) as CurrencyApiDay;
-        const usd = json.aed?.usd;
-        if (typeof usd === "number" && usd > 0) {
-          rows.push({ rate: usd, isoDate: json.date ?? iso });
+        const rate = json.aed?.[key];
+        if (typeof rate === "number" && rate > 0) {
+          rows.push({ rate, isoDate: json.date ?? iso });
         }
       } catch {
         /* skip */
